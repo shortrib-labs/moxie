@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- certificates/ca.yaml
+- k8s-app.yaml
+- kots-app.yaml
+- kots-config.yaml
+- kots-linter-rules.yaml
+- kots-preflight.yaml
+- kots-support-bundle.yaml
+- vendor

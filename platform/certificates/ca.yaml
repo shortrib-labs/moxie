@@ -3,14 +3,13 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: supply-chain-ca
-  namespace: cert-manager
   annotations:
     kots.io/exclude: '{{repl ConfigOptionEquals "certificate_chain" "generate" }}'
 type: kubernetes.io/tls
 data:
   tls.crt: '{{repl ConfigOptionData "signing_certificate" }}'
   tls.key: '{{repl ConfigOptionData "signing_key" }}'
-  ca.crt: '{{repl ternary (ConfigOptionData "root_certificate") (ConfigOptionData "signing_certificate") ( ConfigOption "root_nertificate" | empty ) }}'
+  ca.crt: '{{repl ternary (ConfigOptionData "root_certificate") (ConfigOptionData "signing_certificate") ( ConfigOption "root_certificate" | empty ) }}'
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
