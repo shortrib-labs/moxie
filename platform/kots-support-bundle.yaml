@@ -4,9 +4,121 @@ metadata:
   name: support-bundle
 spec:
   collectors:
-  - clusterInfo: {}
-  - clusterResources: {}
-  - logs:
-      selector:
-      - app.kubernetes.io/name=cert-manager
-      namespace: cert-manager
+    - clusterInfo: {}
+    - clusterResources: {}
+    - registryImages:
+        collectorName: images/cert-manager
+        namespace: cert-manager
+        images: 
+        - quay.io/jetstack/cert-manager-webhook:v1.8.0
+        - quay.io/jetstack/cert-manager-cainjector:v1.8.0
+        - quay.io/jetstack/cert-manager-controller:v1.8.0
+    - logs:
+        name: app/cert-manager-webhook/logs
+        namespace: cert-manager
+        selectors:
+          - app.kubernetes.io/component=webhook
+          - app.kubernetes.io/instance=cert-manager
+          - app.kubernetes.io/name=webhook
+        containerNames:
+          - cert-manager
+        limits:
+          maxAge: 720h
+    - logs:
+        name: app/cert-manager-cainjector/logs
+        namespace: cert-manager
+        selectors:
+          - app.kubernetes.io/component=cainjector
+          - app.kubernetes.io/instance=cert-manager
+          - app.kubernetes.io/name=cainjector
+        containerNames:
+          - cert-manager
+        limits:
+          maxAge: 720h
+    - logs:
+        name: app/cert-manager/logs
+        namespace: cert-manager
+        selectors:
+          - app.kubernetes.io/component=controller
+          - app.kubernetes.io/instance=cert-manager
+          - app.kubernetes.io/name=cert-manager
+        containerNames:
+          - cert-manager
+        limits:
+          maxAge: 720h
+    - secret:
+        name: supply-chain-ca
+        namespace: '{{repl Namespace }}'
+  analyzers:
+    - deploymentStatus:
+        name: cert-manager-webhook
+        outcomes:
+          - fail:
+              when: "absent" # note that the "absent" failure state must be listed first if used.
+              message: The cert-manager-webhook deployment is not present.
+          - fail:
+              when: "< 1"
+              message: The cert-manager-webhook deployment does not have any ready replicas.
+          - warn:
+              when: "= 1"
+              message: The cert-manager-webhook deployment has only than the required number of replicas.
+          - warn:
+              when: "= 1"
+              message: The cert-manager-webhook deployment has only a single ready replica.
+          - pass:
+              message: There are multiple replicas of the cert-manager-webhook deployment ready.
+    - deploymentStatus:
+        name: cert-manager-cainjector
+        outcomes:
+          - fail:
+              when: "absent" # note that the "absent" failure state must be listed first if used.
+              message: The cert-manager-cainjector deployment is not present.
+          - fail:
+              when: "< 1"
+              message: The cert-manager-cainjector deployment does not have any ready replicas.
+          - warn:
+              when: "= 1"
+              message: The cert-manager-cainjector deployment has only than the required number of replicas.
+          - warn:
+              when: "= 1"
+              message: The cert-manager-cainjector deployment has only a single ready replica.
+          - pass:
+              message: There are multiple replicas of the cert-manager-cainjector deployment ready.
+    - deploymentStatus:
+        name: cert-manager
+        outcomes:
+          - fail:
+              when: "absent" # note that the "absent" failure state must be listed first if used.
+              message: The cert-manager deployment is not present.
+          - fail:
+              when: "< 1"
+              message: The cert-manager deployment does not have any ready replicas.
+          - warn:
+              when: "= 1"
+              message: The cert-manager deployment has only than the required number of replicas.
+          - warn:
+              when: "= 1"
+              message: The cert-manager deployment has only a single ready replica.
+          - pass:
+              message: There are multiple replicas of the cert-manager deployment ready.
+    - registryImages:
+        name: Required Images
+        collectorName: images/cert-manager
+        outcomes:
+          - fail:
+              when: "missing > 0"
+              message: Images are missing from registry
+          - warn:
+              when: "errors > 0"
+              message: Failed to check if images are present in registry
+          - pass:
+              message: All images are present in registry
+    - secret:
+        checkName: Supply Chain CA Certificate
+        secretName: supply-chain-ca
+        namespace: '{{repl Namespace }}'
+        outcomes:
+          - fail:
+              message: The Supply Chain Certificate Authority has not been initialized
+          - pass:
+              message: The Supply Chain Certificate Authority been initialized
