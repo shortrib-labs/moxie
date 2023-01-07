@@ -1,0 +1,10 @@
+---
+apiVersion: kots.io/v1beta1
+kind: Application
+metadata:
+  name: moxie
+spec:
+  title: moxie
+  icon: https://github.com/ossf/artwork/blob/70c1012bf5f2a97cdf5335f041f087a74150b7e5/openssf/icon/color/openssf-icon-color.png
+  statusInformers: []
+  ports: []

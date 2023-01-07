@@ -1,0 +1,10 @@
+apiVersion: kots.io/v1beta1
+kind: LintConfig
+metadata:
+  name: moxie-lint-config
+spec:
+  rules:
+  - name: hardcoded-namespace
+    level: "off"
+  - name: kubeval-schema-not-found
+    level: "off"
