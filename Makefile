@@ -2,8 +2,8 @@ PROJECT_DIR := $(shell pwd)
 SOURCE_DIR  := $(PROJECT_DIR)/src
 SECRETS_DIR := $(PROJECT_DIR)/secrets
 
-# CHANNEL       := $(shell git rev-parse --abbrev-ref HEAD) 
-# RELEASE_NOTES := $(shell git log -1 --pretty=%B)
+CHANNEL       := $(shell git rev-parse --abbrev-ref HEAD) 
+RELEASE_NOTES := $(shell git log -1 --pretty=%B)
 BUMP          := rc
 
 MANIFEST_DIR := $(PROJECT_DIR)/platform
