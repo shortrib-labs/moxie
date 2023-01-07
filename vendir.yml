@@ -3,4 +3,12 @@ kind: Config
 minimumRequiredVersion: 0.8.0
 directories:
 - path: platform/vendor
-  contents: []
+  contents: 
+  - path: cert-manager
+    githubRelease:
+      slug: cert-manager/cert-manager
+      tag: v1.8.0
+      disableAutoChecksumValidation: true
+      assetNames: ["cert-manager.yaml"]
+    includePaths:
+    - cert-manager.yaml
