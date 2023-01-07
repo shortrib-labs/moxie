@@ -1,0 +1,7 @@
+tap "vmware-tanzu/carvel"
+brew "helm"
+brew "jq"
+brew "kubernetes-cli"
+brew "velero"
+brew "vmware-tanzu/carvel/vendir"
+brew "yq"
