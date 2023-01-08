@@ -17,7 +17,7 @@ spec:
         title: Generate Certificate Chain
       - name: provide
         title: Provide Signing Certificate
-    - name: signing_certificate`
+    - name: signing_certificate
       title: Signing Certificate
       help_text: The certificate that will sign all certificates in the cluster
       type: textarea
