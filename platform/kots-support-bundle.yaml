@@ -16,7 +16,7 @@ spec:
     - logs:
         name: app/cert-manager-webhook/logs
         namespace: cert-manager
-        selectors:
+        selector:
           - app.kubernetes.io/component=webhook
           - app.kubernetes.io/instance=cert-manager
           - app.kubernetes.io/name=webhook
@@ -27,7 +27,7 @@ spec:
     - logs:
         name: app/cert-manager-cainjector/logs
         namespace: cert-manager
-        selectors:
+        selector:
           - app.kubernetes.io/component=cainjector
           - app.kubernetes.io/instance=cert-manager
           - app.kubernetes.io/name=cainjector
@@ -38,7 +38,7 @@ spec:
     - logs:
         name: app/cert-manager/logs
         namespace: cert-manager
-        selectors:
+        selector:
           - app.kubernetes.io/component=controller
           - app.kubernetes.io/instance=cert-manager
           - app.kubernetes.io/name=cert-manager
