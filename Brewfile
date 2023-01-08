@@ -1,4 +1,5 @@
 tap "vmware-tanzu/carvel"
+brew "adr-tools"
 brew "helm"
 brew "jq"
 brew "kubernetes-cli"
