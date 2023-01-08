@@ -14,17 +14,20 @@ BUILD_DIR    := build
 bump: 
 	@semver up $(BUMP)
 
-lint: $(MANIFESTS)
-	@replicated release lint --yaml-dir $(MANIFEST_DIR)
+build: $(MANIFESTS)
+	@kustomize build $(MANIFEST_DIR) --output $(BUILD_DIR)
+
+lint: build
+	@replicated release lint --yaml-dir $(BUILD_DIR)
 
 .PHONY: release
-release: $(MANIFESTS) bump
+release: build bump
 	@replicated release create \
 		--app ${REPLICATED_APP} \
 		--token ${REPLICATED_API_TOKEN} \
 		--version $(shell semver get $(BUMP)) \
 		--release-notes "$(RELEASE_NOTES)" \
-		--yaml-dir $(MANIFEST_DIR) \
+		--yaml-dir $(BUILD_DIR) \
 		--promote $(CHANNEL) \
 		--auto -y 
 

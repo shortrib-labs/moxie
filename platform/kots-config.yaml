@@ -4,4 +4,33 @@ kind: Config
 metadata:
   name: moxie-platform-config
 spec:
-  groups: []
+  groups:
+  - name: certificates
+    title: Certificates
+    description: Properties relating to certificates used by the platform
+    items:
+    - name: certificate_chain
+      default: generate
+      type: select_one
+      items:
+      - name: generate
+        title: Generate Certificate Chain
+      - name: provide
+        title: Provide Signing Certificate
+    - name: signing_certificate
+      title: Signing Certificate
+      help_text: The certificate that will sign all certificates in the cluster
+      type: textarea
+      when: repl{{ ConfigOptionEquals "certificate_chain" "provide" }}
+      required: true
+    - name: signing_key
+      title: Private Key
+      help_text: The private key that will sign all certificates in the cluster
+      type: textarea
+      when: repl{{ ConfigOptionEquals "certificate_chain" "provide" }}
+      required: true
+    - name: root_certificate
+      title: Root certificate
+      help_text: If the signing certificate is an intermediate, provide the root here
+      type: textarea
+      when: repl{{ ConfigOptionEquals "certificate_chain" "provide" }}
