@@ -49,6 +49,7 @@ spec:
     - secret:
         name: supply-chain-ca
         namespace: '{{repl Namespace }}'
+        key: tls.key
   analyzers:
     - deploymentStatus:
         name: cert-manager-webhook
@@ -117,6 +118,7 @@ spec:
         checkName: Supply Chain CA Certificate
         secretName: supply-chain-ca
         namespace: '{{repl Namespace }}'
+        key: tls.key
         outcomes:
           - fail:
               message: The Supply Chain Certificate Authority has not been initialized
