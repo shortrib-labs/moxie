@@ -54,19 +54,19 @@ spec:
         annotations:
           kubernetes.io/tls-acme: "true"
         hosts:
-        - host: spire.{{repl ConfigOption "subdomain" }}
+        - host: '{{repl cat "spire." (ConfigOption "subdomain") }}'
         tls:
         - secretName: spire-server-tls
           hosts: 
-          - spire.{{repl ConfigOption "subdomain" }}
+          - '{{repl cat "spire." (ConfigOption "subdomain") }}'
 
       oidc:
         enabled: true
         annotations: 
           kubernetes.io/tls-acme: "true"
         hosts: 
-        - host: oidc.{{repl ConfigOption "subdomain" }}
+        - host: '{{repl cat "oidc." (ConfigOption "subdomain") }}'
         tls: 
         - secretName: spire-oidc-tls
           hosts:
-          - oidc.{{repl ConfigOption "subdomain" }}
+          - '{{repl cat "oidc." (ConfigOption "subdomain") }}'
