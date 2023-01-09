@@ -3,6 +3,10 @@ kind: HelmChart
 metadata:
   name: spire
 spec:
+  # namespace allows for a chart to be installed in an alternate namespace to
+  # the default
+  namespace: spire
+
   # chart identifies a matching chart from a .tgz
   chart:
     name: spire
@@ -18,6 +22,7 @@ spec:
 
   # weight determines the order that charts with "useHelmInstall: true" are applied, with lower weights first.
   weight: 20
+
 
   # values are used in the customer environment, as a pre-render step
   # these values will be supplied to helm template
