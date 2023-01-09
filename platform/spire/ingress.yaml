@@ -17,14 +17,14 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: release-name-spire-oidc
+                name: spire-oidc
                 port:
                   number: 443               
           - path: /keys
             pathType: Prefix
             backend:
               service:
-                name: release-name-spire-oidc
+                name: spire-oidc
                 port:
                   number: 443
     - host: '{{repl list "oidc" (ConfigOption "subdomain") | join "." }}'
@@ -34,13 +34,13 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: release-name-spire-oidc
+                name: spire-oidc
                 port:
                   number: 443               
           - path: /keys
             pathType: Prefix
             backend:
               service:
-                name: release-name-spire-oidc
+                name: spire-oidc
                 port:
                   number: 443
