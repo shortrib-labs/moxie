@@ -9,5 +9,7 @@ directories:
       tag: v1.8.0
       url: https://api.github.com/repos/cert-manager/cert-manager/releases/63665514
     path: cert-manager
+  - http: {}
+    path: spire
   path: platform/vendor
 kind: LockConfig

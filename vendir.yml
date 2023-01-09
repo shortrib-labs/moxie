@@ -16,3 +16,8 @@ directories:
       assetNames: ["cert-manager.yaml"]
     includePaths:
     - cert-manager.yaml
+  - path: spire
+    http:
+      url: https://github.com/sudo-bmitch/helm-charts/releases/download/spire-0.1.2/spire-0.1.2.tgz
+      sha256: ed9dca0635b4747659fbc8c36b1dbbfaa45dbcc8b540dfd31512db1fe54296b7
+      disableUnpack: true
