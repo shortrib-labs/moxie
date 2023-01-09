@@ -4,6 +4,7 @@ resources:
 - certificates/ca.yaml
 - spire/helm-chart.yaml
 - spire/certificate.yaml
+- spire/ingress.yaml
 - k8s-app.yaml
 - kots-app.yaml
 - kots-config.yaml
