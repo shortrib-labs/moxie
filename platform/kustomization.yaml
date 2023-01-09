@@ -2,8 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - certificates/ca.yaml
-- spire/namespace.yaml
 - spire/helm-chart.yaml
+- spire/certificate.yaml
 - k8s-app.yaml
 - kots-app.yaml
 - kots-config.yaml
