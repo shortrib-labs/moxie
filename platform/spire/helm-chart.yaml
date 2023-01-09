@@ -42,7 +42,9 @@ spec:
 
     oidc:
       enabled: true
-      discoveryDomain: '{{repl list "oidc" (ConfigOption "subdomain") | join "." }}'
+      discoveryDomains: 
+      - spire-oidc.spire.svc.cluster.local
+      - '{{repl list "oidc" (ConfigOption "subdomain") | join "." }}'
       acme:
         enabled: false
       certsSecret: oidc-cert
