@@ -1,0 +1,49 @@
+apiVersion: kots.io/v1beta1
+kind: HelmChart
+metadata:
+  name: spire
+spec:
+  # namespace allows for a chart to be installed in an alternate namespace to
+  # the default
+  namespace: spire
+
+  # chart identifies a matching chart from a .tgz
+  chart:
+    name: spire
+    chartVersion: 0.1.2
+
+  # helmVersion identifies the Helm Version used to render the chart. Default is v3.
+  helmVersion: v3
+
+  # useHelmInstall identifies whether this Helm chart will use the
+  # Replicated Helm installation (false) or native Helm installation (true). Default is false.
+  # Native Helm installations are only available for Helm v3 charts.
+  useHelmInstall: true
+
+  # weight determines the order that charts with "useHelmInstall: true" are applied, with lower weights first.
+  weight: 20
+
+
+  # values are used in the customer environment, as a pre-render step
+  # these values will be supplied to helm template
+  values:
+    server:
+      trustDomain: "example.org"
+      clusterName: frsca
+
+    agent:
+      kubeletSkipVerification: true
+
+    csi:
+      enabled: true
+
+    client:
+      enabled: false
+
+    oidc:
+      enabled: true
+      discoveryDomain: "spire-oidc.spire.svc.cluster.local"
+      # discoveryDomain: "oidc.example.org"
+      acme:
+        enabled: false
+      certsSecret: oidc-cert
