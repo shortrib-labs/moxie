@@ -55,8 +55,7 @@ spec:
           kubernetes.io/tls-acme: "true"
         hosts:
         - host: '{{repl list "spire" (ConfigOption "subdomain") | join "." }}'
-          paths: 
-          - /
+          path: /
         tls:
         - secretName: spire-server-tls
           hosts: 
@@ -68,8 +67,7 @@ spec:
           kubernetes.io/tls-acme: "true"
         hosts: 
         - host: '{{repl list "oidc" (ConfigOption "subdomain") | join "." }}'
-          paths: 
-          - /
+          path: /
         tls: 
         - secretName: spire-oidc-tls
           hosts:
