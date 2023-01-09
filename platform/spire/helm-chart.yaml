@@ -28,7 +28,7 @@ spec:
   # these values will be supplied to helm template
   values:
     server:
-      trustDomain: "example.org"
+      trustDomain: '{{repl ConfigOption "subdomain" }}'
       clusterName: frsca
 
     agent:
@@ -42,8 +42,7 @@ spec:
 
     oidc:
       enabled: true
-      discoveryDomain: "spire-oidc.spire.svc.cluster.local"
-      # discoveryDomain: "oidc.example.org"
+      discoveryDomain: '{{repl list "oidc" (ConfigOption "subdomain") | join "." }}'
       acme:
         enabled: false
       certsSecret: oidc-cert
@@ -51,24 +50,8 @@ spec:
     ingress:
       server:
         enabled: true
-        annotations:
-          kubernetes.io/tls-acme: "true"
-        hosts:
-        - host: '{{repl list "spire" (ConfigOption "subdomain") | join "." }}'
-          path: /
-        tls:
-        - secretName: spire-server-tls
-          hosts: 
-          - '{{repl list "spire" (ConfigOption "subdomain") | join "." }}'
-
       oidc:
         enabled: true
         annotations: 
           kubernetes.io/tls-acme: "true"
-        hosts: 
-        - host: '{{repl list "oidc" (ConfigOption "subdomain") | join "." }}'
-          path: /
-        tls: 
-        - secretName: spire-oidc-tls
-          hosts:
-          - '{{repl list "oidc" (ConfigOption "subdomain") | join "." }}'
+          ingress.kubernetes.io/force-ssl-redirect: "true"
