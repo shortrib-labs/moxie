@@ -49,8 +49,9 @@ spec:
       certsSecret: oidc-cert
 
     ingress:
-      enabled: true
-      annotations:
-        kubernetes.io/tls-acme: "true"
-      hosts:
-      - host: spire.'{{repl ConfigOption "subdomain" }}'
+      server:
+        enabled: true
+        annotations:
+          kubernetes.io/tls-acme: "true"
+        hosts:
+        - host: spire.'{{repl ConfigOption "subdomain" }}'
