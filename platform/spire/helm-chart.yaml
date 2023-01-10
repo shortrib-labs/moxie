@@ -31,6 +31,10 @@ spec:
       trustDomain: '{{repl ConfigOption "subdomain" }}'
       clusterName: frsca
 
+    service:
+      oidc:
+        type: LoadBalancer
+
     agent:
       kubeletSkipVerification: true
 
