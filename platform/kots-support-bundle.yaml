@@ -13,6 +13,12 @@ spec:
         - quay.io/jetstack/cert-manager-webhook:v1.8.0
         - quay.io/jetstack/cert-manager-cainjector:v1.8.0
         - quay.io/jetstack/cert-manager-controller:v1.8.0
+    - registryImages:
+        collectorName: images/spire
+        namespace: spire
+        images: 
+        - ghcr.io/spiffe/spire-agent:1.4.4
+        - ghcr.io/spiffe/spire-server:1.4.4
     - logs:
         name: app/cert-manager-webhook/logs
         namespace: cert-manager
@@ -44,6 +50,24 @@ spec:
           - app.kubernetes.io/name=cert-manager
         containerNames:
           - cert-manager
+        limits:
+          maxAge: 720h
+    - logs:
+        name: app/spire-server/logs
+        selectors:
+          - app=spire-server
+          - app.kubernetes.io/name=spire
+        containerNames:
+          - spire-server
+        limits:
+          maxAge: 720h
+    - logs:
+        name: app/spire-agent/logs
+        selectors:
+          - app=spire-agent
+          - app.kubernetes.io/name=spire
+        containerNames:
+          - spire-server
         limits:
           maxAge: 720h
     - secret:
@@ -102,18 +126,51 @@ spec:
               message: The cert-manager deployment has only a single ready replica.
           - pass:
               message: There are multiple replicas of the cert-manager deployment ready.
+    - statefulsetStatus:
+        name: spire-server
+        outcomes:
+          - fail:
+              when: "absent" # note that the "absent" failure state must be listed first if used.
+              message: The spire-server StatefulSet is not present.
+          - warn:
+              when: "= 1"
+              message: The spire-server StatefulSet has only than the required number of replicas.
+          - fail:
+              when: "< 1"
+              message: The spire-server StatefulSet does not have any ready replicas.
+          - warn:
+              when: "= 1"
+              message: The spire-server StatefulSet has only a single ready replica.
+          - pass:
+              message: There are multiple replicas of the spire-server StatefulSet ready.
     - registryImages:
         name: Required Images
         collectorName: images/cert-manager
         outcomes:
           - fail:
               when: "missing > 0"
-              message: One more required images are missing from registry. Be sure you have connectivity to all required registries.
+              message: | 
+                One more images required by cert-manager are missing from registry. Be sure you have 
+                connectivity to all required registries.
           - warn:
               when: "errors > 0"
-              message: Failed to check if images are present in registry
+              message: Failed to check if cert-manager images are present in registry
           - pass:
-              message: All required images are are present and available to be pulled.
+              message: All required images for cert-manager are are present and available to be pulled.
+    - registryImages:
+        name: Required Images
+        collectorName: images/spire
+        outcomes:
+          - fail:
+              when: "missing > 0"
+              message: | 
+                One more images required by spire are missing from registry. Be sure you have 
+                connectivity to all required registries.
+          - warn:
+              when: "errors > 0"
+              message: Failed to check if spire images are present in registry
+          - pass:
+              message: All required images for spire are are present and available to be pulled.
     - secret:
         checkName: Supply Chain CA Certificate
         secretName: supply-chain-ca
