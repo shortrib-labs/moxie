@@ -108,12 +108,12 @@ spec:
         outcomes:
           - fail:
               when: "missing > 0"
-              message: Images are missing from registry
+              message: One more required images are missing from registry. Be sure you have connectivity to all required registries.
           - warn:
               when: "errors > 0"
               message: Failed to check if images are present in registry
           - pass:
-              message: All images are present in registry
+              message: All required images are are present and available to be pulled.
     - secret:
         checkName: Supply Chain CA Certificate
         secretName: supply-chain-ca
