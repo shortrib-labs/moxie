@@ -10,4 +10,5 @@ spec:
   - spire
   statusInformers: 
   - cert-manager/deployment/cert-manager
+  - spire/deployment/spire
   ports: []
