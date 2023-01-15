@@ -21,3 +21,8 @@ directories:
       url: https://github.com/sudo-bmitch/helm-charts/releases/download/spire-0.1.2/spire-0.1.2.tgz
       sha256: ed9dca0635b4747659fbc8c36b1dbbfaa45dbcc8b540dfd31512db1fe54296b7
       disableUnpack: true
+  - path: vault
+    http:
+      url: https://helm.releases.hashicorp.com/vault-0.23.0.tgz 
+      sha256: b633868393d9588774e7f7aa39d6e67d136561566dc8eecdbf5a343e543828b9
+      disableUnpack: true

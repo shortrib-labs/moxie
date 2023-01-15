@@ -11,5 +11,7 @@ directories:
     path: cert-manager
   - http: {}
     path: spire
+  - http: {}
+    path: vault
   path: platform/vendor
 kind: LockConfig
