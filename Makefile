@@ -16,6 +16,7 @@ bump:
 
 build: $(MANIFESTS)
 	@kustomize build $(MANIFEST_DIR) --output $(BUILD_DIR)
+	@find $(MANIFEST_DIR) -name '*.tgz' -exec cp {} $(BUILD_DIR) \;
 
 lint: build
 	@replicated release lint --yaml-dir $(BUILD_DIR)

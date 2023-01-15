@@ -1,0 +1,22 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: oidc-cert
+  namespace: spire
+spec:
+  commonName: oidc
+  secretName: oidc-cert
+  duration: 336h     # 14 days
+  renewBefore: 168h  #  7 days
+  dnsNames:
+    - spire-oidc.spire.svc.cluster.local
+    - '{{repl list "oidc" (ConfigOption "subdomain") | join "." }}'
+    - oidc
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: supply-chain-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io
