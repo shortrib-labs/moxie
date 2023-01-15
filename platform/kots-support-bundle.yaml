@@ -54,7 +54,7 @@ spec:
           maxAge: 720h
     - logs:
         name: app/spire-server/logs
-        selectors:
+        selector:
           - app=spire-server
           - app.kubernetes.io/name=spire
         containerNames:
@@ -63,7 +63,7 @@ spec:
           maxAge: 720h
     - logs:
         name: app/spire-agent/logs
-        selectors:
+        selector:
           - app=spire-agent
           - app.kubernetes.io/name=spire
         containerNames:
