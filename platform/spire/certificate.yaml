@@ -11,8 +11,8 @@ spec:
   renewBefore: 168h  #  7 days
   dnsNames:
     - spire-oidc.spire.svc.cluster.local
-    - '{{repl list "oidc" (ConfigOption "subdomain") | join "." }}'
-    - oidc
+    - '{{repl list "spire" (ConfigOption "subdomain") | join "." }}'
+    - spire
   privateKey:
     algorithm: ECDSA
     size: 256
