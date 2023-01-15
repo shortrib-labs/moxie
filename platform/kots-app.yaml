@@ -8,6 +8,7 @@ spec:
   icon: https://raw.githubusercontent.com/ossf/artwork/master/openssf/icon/color/openssf-icon-color.png
   additionalNamespaces:
   - spire
+  - vault
   statusInformers: 
   - cert-manager/deployment/cert-manager
   - spire/statefulset/spire-server
