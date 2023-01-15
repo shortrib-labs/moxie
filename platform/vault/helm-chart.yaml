@@ -1,0 +1,57 @@
+apiVersion: kots.io/v1beta1
+kind: HelmChart
+metadata:
+  name: vault
+spec:
+  # namespace allows for a chart to be installed in an alternate namespace to
+  # the default
+  namespace: vault
+
+  # chart identifies a matching chart from a .tgz
+  chart:
+    name: vault
+    chartVersion: 0.23.0
+
+  # helmVersion identifies the Helm Version used to render the chart. Default is v3.
+  helmVersion: v3
+
+  # useHelmInstall identifies whether this Helm chart will use the
+  # Replicated Helm installation (false) or native Helm installation (true). Default is false.
+  # Native Helm installations are only available for Helm v3 charts.
+  useHelmInstall: true
+
+  # weight determines the order that charts with "useHelmInstall: true" are applied, with lower weights first.
+  weight: 30
+
+  # values are used in the customer environment, as a pre-render step
+  # these values will be supplied to helm template
+  values: 
+    injector:
+      enabled: false
+
+    server:
+      # affinity: ""
+      # extraEnvironmentVars:
+      #   VAULT_CACERT: /vault/userconfig/ca-certs/spire-ca.pem
+
+      # standalone:
+      #   enabled: true
+      #   config: |
+      #     listener "tcp" {
+      #       address = "[::]:8200"
+      #       cluster_address = "[::]:8201"
+      #     }
+      #     storage "file" {
+      #       path = "/vault/data"
+      #     }
+
+      volumes:
+        - name: ca-certs
+          configMap:
+            name: ca-certs
+
+      volumeMounts:
+        - name: ca-certs
+          mountPath: /etc/ssl/certs/ca-certificates.crt
+          subPath: spire-ca.pem
+          readOnly: true
