@@ -44,6 +44,7 @@ spec:
             telemetry {
               unauthenticated_metrics_access = "true"
             }
+          }
           storage "file" {
             path = "/vault/data"
           }
