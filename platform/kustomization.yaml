@@ -6,6 +6,7 @@ resources:
 - spire/helm-chart.yaml
 - spire/certificate.yaml
 - vault/helm-chart.yaml
+- vault/certificate.yaml
 - k8s-app.yaml
 - kots-app.yaml
 - kots-config.yaml
