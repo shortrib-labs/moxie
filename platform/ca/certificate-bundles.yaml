@@ -105,7 +105,8 @@ spec:
               --dry-run=client -o=yaml | kubectl apply --server-side=true -f -
           done
 
-          kubectl -n vault create configmap ca-certs \
+          # vault uses more specific 
+          kubectl -n vault create configmap spire-ca-certs \
             --from-file=spire-ca.pem="/certificates/supply-chain.pem" \
             --dry-run=client -o=yaml | kubectl apply --server-side=true -f -
         env:
