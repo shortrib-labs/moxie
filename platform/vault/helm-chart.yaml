@@ -59,7 +59,7 @@ spec:
       - name: vault-tls
         secret:
           defaultMode: 420
-          secretName: vault-server-tls
+          secretName: vault-tls
 
       volumeMounts:
       - name: ca-certs
