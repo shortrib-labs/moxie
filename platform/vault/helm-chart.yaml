@@ -102,7 +102,7 @@ spec:
       volumes:
         - name: ca-certs
           configMap:
-            name: ca-certs
+            name: spire-ca-certs
 
       volumeMounts:
         - name: ca-certs
