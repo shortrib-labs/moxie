@@ -48,6 +48,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: certificate-bundler
+  namespace: '{{repl Namespace}}'
 roleRef:
   kind: ClusterRole
   name: create-certificate-bundles
