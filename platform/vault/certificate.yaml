@@ -10,9 +10,9 @@ spec:
   duration: 336h     # 14 days
   renewBefore: 168h  #  7 days
   dnsNames:
-    - vault.vault.svc.cluster.local
     - '{{repl list "vault" (ConfigOption "subdomain") | join "." }}'
-    - vault
+    - vault-internal.vault.svc.cluster.local
+    - vault-internal
   privateKey:
     algorithm: ECDSA
     size: 256
