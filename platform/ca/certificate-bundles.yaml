@@ -12,10 +12,6 @@ rules:
 - apiGroups: [""]
   resources:
   - secrets
-  - configmaps
-  resourceNames:
-  - supply-chain-ca
-  - kotsadm-application-metadat
   verbs:
   - get
 ---
@@ -28,6 +24,7 @@ rules:
   resources:
   - configmaps
   verbs:
+  - get
   - create
   - update
   - patch
