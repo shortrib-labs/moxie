@@ -1,0 +1,122 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: certificate-bundler
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: get-ca-certificate
+rules:
+- apiGroups: [""]
+  resources:
+  - secrets
+  - configmaps
+  resourceNames:
+  - supply-chain-ca
+  - kotsadm-application-metadat
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: create-certificate-bundles
+rules:
+- apiGroups: [""]
+  resources:
+  - configmaps
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: certificate-bundler-get-certificates
+subjects:
+- kind: ServiceAccount
+  name: certificate-bundler
+roleRef:
+  kind: Role
+  name: get-ca-certificates
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: certificate-bundler-create-bundles
+subjects:
+- kind: ServiceAccount
+  name: certificate-bundler
+roleRef:
+  kind: ClusterRole
+  name: create-certificate-bundles
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-certificate-bundle
+spec:
+  template:
+    spec:
+      serviceAccountName: certificate-bundler
+      initContainers:
+      - image: bitnami/kubectl
+        name: get-certificate-secret
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        command:
+        - /bin/bash
+        - -c
+        - |
+          kubectl get -n moxie secret supply-chain-ca -o jsonpath='{.data.ca\.crt}' | base64 -d > /certificates/ca.pem
+          kubectl get -n moxie secret supply-chain-ca -o jsonpath='{.data.tls\.crt}' | base64 -d > /certificates/supply-chain.pem
+          cat /etc/ssl/certs/ca-certificates.crt /certificates/ca.pem /certificates/supply-chain.pem > /certificates/ca-bundle.pem
+        volumeMounts:
+        - mountPath: /certificates
+          name: certificates
+      containers:
+      - image: nixery.dev/shell/yq/kubectl
+        name: create-certificate-bundle
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        command:
+        - /bin/sh
+        - -c
+        - |
+          namespaces=$(kubectl get configmap -o yaml -n ${NAMESPACE} kotsadm-application-metadata -o jsonpath='{.data.application\.yaml}' |\
+                          yq -r '.spec.additionalNamespaces[]')
+          for namespace in ${namespaces}; 
+          do
+            kubectl create -n ${namespace} configmap ca-certs \
+              --from-file=ca-certificates.crt="/certificates/ca-bundle.pem" \
+              --dry-run=client -o=yaml | kubectl apply --server-side=true -f -
+          done
+
+          kubectl -n vault create configmap ca-certs \
+            --from-file=spire-ca.pem="/certificates/supply-chain.pem" \
+            --dry-run=client -o=yaml | kubectl apply --server-side=true -f -
+        env:
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        volumeMounts:
+        - mountPath: /certificates
+          name: certificates
+      restartPolicy: Never
+      volumes:
+      - name: certificates
+        emptyDir: {}
