@@ -52,6 +52,23 @@ spec:
             path = "/vault/data"
           }
 
+      volumes:
+      - name: ca-certs
+        configMap:
+          name: spire-ca-certs
+      - name: vault-tls
+        secrets:
+          name: vault-tls
+
+      volumeMounts:
+      - name: ca-certs
+        mountPath: /etc/ssl/certs/ca-certificates.crt
+        subPath: spire-ca.pem
+        readOnly: true
+      - name: vault-tls
+        mountPath: /vault/userconfig/vault-server-tls
+        readOnly: true
+       
     # Vault is able to collect and publish various runtime metrics.
     # Enabling this feature requires setting adding `telemetry{}` stanza to
     # the Vault configuration. There are a few examples included in the `config` sections above.
@@ -103,19 +120,3 @@ spec:
         # Timeout for Prometheus scrapes
         scrapeTimeout: 10s
       
-    volumes:
-    - name: ca-certs
-      configMap:
-        name: spire-ca-certs
-    - name: vault-tls
-      secrets:
-        name: vault-tls
-
-    volumeMounts:
-    - name: ca-certs
-      mountPath: /etc/ssl/certs/ca-certificates.crt
-      subPath: spire-ca.pem
-      readOnly: true
-    - name: vault-tls
-      mountPath: /vault/userconfig/vault-server-tls
-      readOnly: true
