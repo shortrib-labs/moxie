@@ -57,8 +57,9 @@ spec:
         configMap:
           name: spire-ca-certs
       - name: vault-tls
-        secrets:
-          name: vault-tls
+        secret:
+          defaultMode: 420
+          secretName: vault-server-tls
 
       volumeMounts:
       - name: ca-certs
