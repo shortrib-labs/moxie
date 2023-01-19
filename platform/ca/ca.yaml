@@ -9,7 +9,7 @@ type: kubernetes.io/tls
 data:
   tls.crt: '{{repl ConfigOption "signing_certificate" | Base64Encode }}'
   tls.key: '{{repl ConfigOption "signing_key" | Base64Encode }}'
-  ca.crt: '{{repl ( ternary (ConfigOption "root_certificate") (ConfigOption "signing_certificate") ( ConfigOption "root_certificate" | empty ) ) | Base64Encode }}'
+  ca.crt: '{{repl ( ternary (ConfigOption "signing_certificate") (ConfigOption "root_certificate") ( ConfigOption "root_certificate" | empty ) ) | Base64Encode }}'
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
