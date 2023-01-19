@@ -14,6 +14,9 @@ spec:
   - spire/statefulset/spire-server
   ports: []
   graphs:
+    # Vault request tracking
+    - title: Vault Requests
+      query: 'sum(vault_core_handle_request_count)'
     # Disk Usage, CPU Usage, and Memory Usage below are the default graphs
     - title: Disk Usage
       queries:
