@@ -7,52 +7,57 @@ metadata:
 spec:
   template:
     spec:
-     containers:
-     - image: vault
-       name: unseal
-       resources:
-         requests:
-           memory: "64Mi"
-           cpu: "250m"
-         limits:
-           memory: "128Mi"
-           cpu: "500m"
-       command:
-       - /bin/sh
-       - -c
-       - |
-         vault_exec() {
-           command=$1
-           shift
-           vault $command --address https://vault-internal:8200 --ca-cert /vault/userconfig/vault-server-tls/ca.crt $@
-         }
-
-         # wait for vault to start, the status command may error
-         set +o pipefail
-         while ! vault_exec status 2>&1 | grep -q "^Initialized"; do
-           sleep 5
-         done
-
-         if vault_exec status 2>&1 | grep -q '^Initialized.*false'; then
-           INIT_OUT=$(vault_exec operator init --key-shares 1 --key-threshold 1)
-           UNSEAL_KEY=$(echo "$INIT_OUT" | grep "Unseal Key" | sed 's/^.*: //')
-           ROOT_TOKEN=$(echo "$INIT_OUT" | grep "Initial Root Token" | sed 's/^.*: //')
-           echo "$UNSEAL_KEY" > "${GIT_ROOT}/platform/components/vault/unseal-key"
-           echo "$ROOT_TOKEN" > "${GIT_ROOT}/platform/components/vault/root-token"
-         fi
-         UNSEAL_KEY="$(cat "${GIT_ROOT}/platform/components/vault/unseal-key")"
-         ROOT_TOKEN="$(cat "${GIT_ROOT}/platform/components/vault/root-token")"
-
-         if vault_exec status 2>&1 | grep -q '^Sealed.*true'; then
-           vault_exec operator unseal "$UNSEAL_KEY"
-         fi 
-       volumeMounts:
-       - name: vault-tls
-         mountPath: /vault/userconfig/vault-server-tls
-         readOnly: true
-     volumes:
-     - name: vault-tls
-       secret:
-         defaultMode: 420
-         secretName: vault-tls
-     restartPolicy: Never
+      containers:
+      - image: vault
+        name: unseal
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        command:
+        - /bin/sh
+        - -c
+        - |
+          vault_exec() {
+            command=$1
+            shift
+            vault $@ --address https://vault-internal:8200 --ca-cert /vault/userconfig/vault-server-tls/ca.crt 
+          }
+ 
+          # wait for vault to start, the status command may error
+          set +o pipefail
+          while ! vault_exec status 2>&1 | grep -q "^Initialized"; do
+            sleep 5
+          done
+ 
+          if vault_exec status 2>&1 | grep -q '^Initialized.*false'; then
+            INIT_OUT=$(vault_exec operator init --key-shares 1 --key-threshold 1)
+            UNSEAL_KEY=$(echo "$INIT_OUT" | grep "Unseal Key" | sed 's/^.*: //')
+            ROOT_TOKEN=$(echo "$INIT_OUT" | grep "Initial Root Token" | sed 's/^.*: //')
+            echo "$UNSEAL_KEY" > "/vault/unseal/unseal-key"
+            echo "$ROOT_TOKEN" > "/vault/unseal/root-token"
+          fi
+          UNSEAL_KEY="$(cat "/vault/unseal/unseal-key")"
+          ROOT_TOKEN="$(cat "/vault/unseal/root-token")"
+ 
+          if vault_exec status 2>&1 | grep -q '^Sealed.*true'; then
+            vault_exec operator unseal "$UNSEAL_KEY"
+          fi 
+        volumeMounts:
+        - name: vault-tls
+          mountPath: /vault/userconfig/vault-server-tls
+          readOnly: true
+        - name: unseal
+          mountPath: /vault/unseal
+          readOnly: true
+      volumes:
+      - name: vault-tls
+        secret:
+          defaultMode: 420
+          secretName: vault-tls
+      - name: unseal
+        emptyDir: {}
+      restartPolicy: Never
