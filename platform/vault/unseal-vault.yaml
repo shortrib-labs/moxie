@@ -29,6 +29,7 @@ spec:
  
           # wait for vault to start, the status command may error
           set +o pipefail
+          set -x
           while ! vault_exec status 2>&1 | grep -q "^Initialized"; do
             sleep 5
           done
