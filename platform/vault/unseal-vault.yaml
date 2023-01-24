@@ -1,4 +1,6 @@
 ---
+
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -21,41 +23,34 @@ spec:
         - /bin/sh
         - -c
         - |
-          vault_exec() {
-            vault $@ --address https://vault-internal:8200 --ca-cert /vault/userconfig/vault-server-tls/ca.crt 
-          }
+          export VAULT_ADDR=https://vault-internal:8200 
+          export VAULT_CACERT=/vault/userconfig/vault-server-tls/ca.crt 
  
           # wait for vault to start, the status command may error
-          while ! vault_exec status 2>&1 | grep -q "^Initialized"; do
-            vault_exec status
+          set +o pipefail
+          while ! vault status 2>&1 | grep -q "^Initialized"; do
             sleep 5
           done
  
-          if vault_exec status 2>&1 | grep -q '^Initialized.*false'; then
-            INIT_OUT=$(vault_exec operator init --key-shares 1 --key-threshold 1)
-            echo $INIT_OUT
+          if vault status 2>&1 | grep -q '^Initialized.*false'; then
+            INIT_OUT=$(vault operator init --key-shares 1 --key-threshold 1)
             UNSEAL_KEY=$(echo "$INIT_OUT" | grep "Unseal Key" | sed 's/^.*: //')
-            ROOT_TOKEN=$(echo "$INIT_OUT" | grep "Initial Root Token" | sed 's/^.*: //')
-            echo "$UNSEAL_KEY" > /vault/unseal/unseal-key
-            echo "$ROOT_TOKEN" > /vault/unseal/root-token
           fi
-          UNSEAL_KEY="$(cat /vault/unseal/unseal-key)"
-          ROOT_TOKEN="$(cat /vault/unseal/root-token)"
+
+          # this is not ideal, but a good stopgap while developing
+          echo "$INIT_OUT"
  
-          if vault_exec status 2>&1 | grep -q '^Sealed.*true'; then
-            vault_exec operator unseal "$UNSEAL_KEY"
+          if vault status 2>&1 | grep -q '^Sealed.*true'; then
+            vault operator unseal "$UNSEAL_KEY"
           fi 
+          cat 
         volumeMounts:
         - name: vault-tls
           mountPath: /vault/userconfig/vault-server-tls
           readOnly: true
-        - name: unseal
-          mountPath: /vault/unseal
       volumes:
       - name: vault-tls
         secret:
           defaultMode: 420
           secretName: vault-tls
-      - name: unseal
-        emptyDir: {}
       restartPolicy: Never
