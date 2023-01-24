@@ -26,6 +26,9 @@ spec:
   # values are used in the customer environment, as a pre-render step
   # these values will be supplied to helm template
   values: 
+    global:
+      tlsDisable: false
+    
     injector:
       enabled: false
 
@@ -44,13 +47,17 @@ spec:
             tls_cert_file = "/vault/userconfig/vault-server-tls/tls.crt"
             tls_key_file  = "/vault/userconfig/vault-server-tls/tls.key"
             telemetry {
-              unauthenticated_metrics_access = "true"
+              unauthenticated_metrics_access = true
             }
+          }
+          telemetry {
+            prometheus_retention_time = "12h"
+            disable_hostname = true
+            enable_hostname_label = true
           }
           storage "file" {
             path = "/vault/data"
           }
-
       volumes:
       - name: ca-certs
         configMap:
