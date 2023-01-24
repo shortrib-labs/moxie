@@ -33,13 +33,14 @@ spec:
  
           if vault_exec status 2>&1 | grep -q '^Initialized.*false'; then
             INIT_OUT=$(vault_exec operator init --key-shares 1 --key-threshold 1)
+            echo $INIT_OUT
             UNSEAL_KEY=$(echo "$INIT_OUT" | grep "Unseal Key" | sed 's/^.*: //')
             ROOT_TOKEN=$(echo "$INIT_OUT" | grep "Initial Root Token" | sed 's/^.*: //')
-            echo "$UNSEAL_KEY" > "/vault/unseal/unseal-key"
-            echo "$ROOT_TOKEN" > "/vault/unseal/root-token"
+            echo "$UNSEAL_KEY" > /vault/unseal/unseal-key
+            echo "$ROOT_TOKEN" > /vault/unseal/root-token
           fi
-          UNSEAL_KEY="$(cat "/vault/unseal/unseal-key")"
-          ROOT_TOKEN="$(cat "/vault/unseal/root-token")"
+          UNSEAL_KEY="$(cat /vault/unseal/unseal-key)"
+          ROOT_TOKEN="$(cat /vault/unseal/root-token)"
  
           if vault_exec status 2>&1 | grep -q '^Sealed.*true'; then
             vault_exec operator unseal "$UNSEAL_KEY"
