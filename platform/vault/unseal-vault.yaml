@@ -22,15 +22,12 @@ spec:
         - -c
         - |
           vault_exec() {
-            command=$1
-            shift
             vault $@ --address https://vault-internal:8200 --ca-cert /vault/userconfig/vault-server-tls/ca.crt 
           }
  
           # wait for vault to start, the status command may error
-          set +o pipefail
-          set -x
           while ! vault_exec status 2>&1 | grep -q "^Initialized"; do
+            vault_exec status
             sleep 5
           done
  
