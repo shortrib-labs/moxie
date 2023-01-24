@@ -50,7 +50,6 @@ spec:
           readOnly: true
         - name: unseal
           mountPath: /vault/unseal
-          readOnly: true
       volumes:
       - name: vault-tls
         secret:
