@@ -58,6 +58,11 @@ spec:
           storage "file" {
             path = "/vault/data"
           }
+
+      service:
+        type: LoadBalancer
+        port: 443 
+
       volumes:
       - name: ca-certs
         configMap:
@@ -76,27 +81,6 @@ spec:
         mountPath: /vault/userconfig/vault-server-tls
         readOnly: true
        
-      ingress:
-        enabled: true
-        annotations: 
-          # |
-          # kubernetes.io/ingress.class: nginx
-          # kubernetes.io/tls-acme: "true"
-          #   or
-          # kubernetes.io/ingress.class: nginx
-          # kubernetes.io/tls-acme: "true"
-
-        pathType: Prefix
-
-        hosts:
-        - host: '{{repl list "vault" (ConfigOption "subdomain") | join "." }}'
-          paths: 
-          - /
-        tls: 
-         - secretName: vault-tls 
-           hosts:
-           - '{{repl list "vault" (ConfigOption "subdomain") | join "." }}'
-
     # Vault is able to collect and publish various runtime metrics.
     # Enabling this feature requires setting adding `telemetry{}` stanza to
     # the Vault configuration. There are a few examples included in the `config` sections above.
