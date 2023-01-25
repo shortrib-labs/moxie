@@ -4,4 +4,6 @@ metadata:
   name: moxie
 spec:
   descriptor:
-    links: []
+    links:
+    - description: "Vault Secret Store"
+      url: 'https://vault.{{repl ConfigOption "subdomain"}}'
