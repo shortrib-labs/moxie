@@ -14,9 +14,6 @@ spec:
   - spire/statefulset/spire-server
   ports: []
   graphs:
-    # Vault request tracking
-    - title: Vault Requests
-      query: 'sum(vault_core_handle_request_count)'
     # Disk Usage, CPU Usage, and Memory Usage below are the default graphs
     - title: Disk Usage
       queries:
@@ -32,3 +29,10 @@ spec:
       query: 'sum(container_memory_usage_bytes{namespace="{{repl Namespace}}",container!="POD",pod!=""}) by (pod)'
       legend: '{{ pod }}'
       yAxisFormat: bytes
+    # Vault at a glance
+    - title: Vault Requests
+      query: 'sum(vault_core_handle_request_count)'
+    - title: Vault Secrets
+      query: 'avg without(instance) (vault_secret_kv_count)'
+    - title: Vault Tokens
+      query: 'avg by(auth_method, creation_ttl) (vault_token_creation)'
