@@ -17,10 +17,10 @@ spec:
     # Disk Usage, CPU Usage, and Memory Usage below are the default graphs
     - title: Disk Usage
       queries:
-        - query: 'sum((node_filesystem_size_bytes{job="node-exporter",fstype!="",instance!=""} - node_filesystem_avail_bytes{job="node-exporter", fstype!=""})) by (instance)'
-          legend: 'Used: {{ instance }}'
-        - query: 'sum((node_filesystem_avail_bytes{job="node-exporter",fstype!="",instance!=""})) by (instance)'
-          legend: 'Available: {{ instance }}'
+      - query: 'sum((node_filesystem_size_bytes{job="node-exporter",fstype!="",instance!=""} - node_filesystem_avail_bytes{job="node-exporter", fstype!=""})) by (instance)'
+        legend: 'Used: {{ instance }}'
+      - query: 'sum((node_filesystem_avail_bytes{job="node-exporter",fstype!="",instance!=""})) by (instance)'
+        legend: 'Available: {{ instance }}'
       yAxisFormat: bytes
     - title: CPU Usage
       query: 'sum(rate(container_cpu_usage_seconds_total{namespace="{{repl Namespace}}",container!="POD",pod!=""}[5m])) by (pod)'
@@ -32,7 +32,9 @@ spec:
     # Vault at a glance
     - title: Vault Requests
       query: 'sum(vault_core_handle_request_count)'
+      legend: Requests
     - title: Vault Secrets
       query: 'avg without(instance) (vault_secret_kv_count)'
+      legend: Secrets
     - title: Vault Tokens
       query: 'avg by(auth_method, creation_ttl) (vault_token_creation)'
