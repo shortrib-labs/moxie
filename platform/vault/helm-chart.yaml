@@ -89,13 +89,13 @@ spec:
         pathType: Prefix
 
         hosts:
-        - host: vault.'{{repl ConfigOption "subdomain" }}'
+        - host: '{{repl list "vault" (ConfigOption "subdomain") | join "." }}'
           paths: 
           - /
         tls: 
          - secretName: vault-tls 
            hosts:
-           - vault.'{{repl ConfigOption "subdomain" }}'
+           - '{{repl list "vault" (ConfigOption "subdomain") | join "." }}'
 
     # Vault is able to collect and publish various runtime metrics.
     # Enabling this feature requires setting adding `telemetry{}` stanza to
